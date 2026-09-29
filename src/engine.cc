@@ -43,6 +43,7 @@ enum Param {
   P_Y_SPREAD, P_Y_BIAS, P_Y_STEPS, P_Y_DIVIDER, P_Y_RANGE,
   P_CLOCK, P_CLOCK_DIV,
   P_OUT_T1, P_OUT_T2, P_OUT_T3, P_OUT_X1, P_OUT_X2, P_OUT_X3, P_OUT_Y,
+  P_MIDI_TRIGGER, P_MIDI_NOTE,
   P_LAST
 };
 
@@ -88,6 +89,8 @@ const ParamInfo kParams[P_LAST] = {
   { "out_x2", 0, true },
   { "out_x3", 0, true },
   { "out_y", 0, true },
+  { "midi_trigger", 0, true },  // Any Note
+  { "midi_note", 36, false },
 };
 
 enum Output { OUT_T1, OUT_T2, OUT_T3, OUT_X1, OUT_X2, OUT_X3, OUT_Y, NUM_OUTPUTS };
@@ -118,6 +121,10 @@ struct Instance {
   double ppq;
   double bpm;
   bool clock_level;
+
+  // Clock = MIDI: notes on the plugin's track clock the T section.
+  int midi_held;           // matching notes currently down
+  int midi_pulse;          // samples left of the minimum pulse after a note-on
 
   // Gates seen during the current block, so pulses shorter than a block still reach the jack.
   bool gate_level[3];
@@ -169,9 +176,21 @@ void Connect(Instance* s, int output, int option) {
   if (output <= OUT_T3) s->gate_sent[output] = !s->gate_sent[output];  // force a resend
 }
 
+// The firmware's objects are globals, zeroed before Init(); some members are never set by Init()
+// (e.g. clouds' GranularProcessor::silence_), so instances live in zeroed memory too.
+Instance* NewInstance() {
+  void* mem = calloc(1, sizeof(Instance));
+  return mem ? new (mem) Instance : NULL;
+}
+
+void DeleteInstance(Instance* s) {
+  s->~Instance();
+  free(s);
+}
+
 void* Create(const char* data_dir) {
   (void)data_dir;
-  Instance* s = new (std::nothrow) Instance;
+  Instance* s = NewInstance();
   if (!s) return NULL;
   memset(s->gate_level, 0, sizeof s->gate_level);
   memset(s->gate_rose, 0, sizeof s->gate_rose);
@@ -203,11 +222,33 @@ void Destroy(void* inst) {
     if (s->jack[o] >= 0) cv_out::Release(s, s->jack[o]);
   }
   cv_out::RemoveInstance();
-  delete s;
+  DeleteInstance(s);
 }
 
+enum MidiTrigger { MIDI_ANY, MIDI_LEARN, MIDI_ONE_NOTE };
+const int kMinPulse = 44;  // 1 ms, so a note shorter than a sample block still makes a clock edge
+
 void Midi(void* inst, const uint8_t* msg, int len) {
-  (void)inst; (void)msg; (void)len;
+  Instance* s = static_cast<Instance*>(inst);
+  if (len < 3) return;
+  uint8_t status = msg[0] & 0xf0;
+  bool on = status == 0x90 && msg[2] > 0;
+  bool off = status == 0x80 || (status == 0x90 && msg[2] == 0);
+  if (!on && !off) return;
+  int mode = OptionIndex(s, P_MIDI_TRIGGER);
+  if (on && mode == MIDI_LEARN) {
+    // The next note becomes the trigger note (press the pad you want).
+    s->param[P_MIDI_NOTE] = msg[1];
+    s->param[P_MIDI_TRIGGER] = MIDI_ONE_NOTE;
+    mode = MIDI_ONE_NOTE;
+  }
+  if (mode == MIDI_ONE_NOTE && msg[1] != static_cast<int>(s->param[P_MIDI_NOTE] + 0.5f)) return;
+  if (on) {
+    ++s->midi_held;
+    s->midi_pulse = kMinPulse;
+  } else if (s->midi_held > 0) {
+    --s->midi_held;
+  }
 }
 
 void SetParam(void* inst, const char* key, const char* val);
@@ -292,6 +333,16 @@ void MakeTransportClock(Instance* s, size_t offset, size_t size) {
   }
 }
 
+// Clock = MIDI: high while a trigger note is held (at least kMinPulse samples).
+void MakeMidiClock(Instance* s, size_t size) {
+  for (size_t i = 0; i < size; ++i) {
+    bool level = s->midi_held > 0 || s->midi_pulse > 0;
+    if (s->midi_pulse > 0) --s->midi_pulse;
+    s->clock[i] = stmlib::ExtractGateFlags(s->clock_level ? stmlib::GATE_FLAG_HIGH : stmlib::GATE_FLAG_LOW, level);
+    s->clock_level = level;
+  }
+}
+
 void ConfigureGenerators(Instance* s, GroupSettings* x, GroupSettings* y) {
   TGenerator& t = s->t_generator;
   t.set_model(TGeneratorModel(Clamp(OptionIndex(s, P_T_MODEL), 0, int(T_GENERATOR_MODEL_MARKOV))));
@@ -359,9 +410,11 @@ void Render(void* inst, int16_t* out_lr, int frames) {
   GroupSettings x, y;
   ConfigureGenerators(s, &x, &y);
 
-  bool external = OptionIndex(s, P_CLOCK) == 1;
+  enum { CLOCK_INTERNAL, CLOCK_MPC, CLOCK_MIDI };
+  int clock = OptionIndex(s, P_CLOCK);
+  bool external = clock == CLOCK_MPC || clock == CLOCK_MIDI;
   // Restart the patterns when the transport starts, so deja vu loops line up with the song.
-  bool reset = external && s->playing && !s->was_playing;
+  bool reset = clock == CLOCK_MPC && s->playing && !s->was_playing;
   s->was_playing = s->playing;
 
   Ramps ramps;
@@ -372,7 +425,11 @@ void Render(void* inst, int16_t* out_lr, int frames) {
   ClockSource xy_source = ClockSource(Clamp(OptionIndex(s, P_X_CLOCK), 0, 3));
 
   for (size_t offset = 0; offset + kSubBlock <= static_cast<size_t>(frames); offset += kSubBlock) {
-    MakeTransportClock(s, offset, kSubBlock);
+    if (clock == CLOCK_MIDI) {
+      MakeMidiClock(s, kSubBlock);
+    } else {
+      MakeTransportClock(s, offset, kSubBlock);
+    }
     bool t_reset = reset;
     bool x_reset = reset;
     reset = false;

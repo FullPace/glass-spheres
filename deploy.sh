@@ -26,7 +26,13 @@ echo "copied to $DEST ($LOCAL_MD5)"
 
 # 2. plugin list entry (once)
 if ssh "$HOST" "grep -q 'file=\"$DEST/$SO\"' '$SETTINGS'"; then
-  echo "already registered: remove Marbles CV from its track and insert it again to load this build"
+  # MPC keeps a plugin's .so loaded while any instance exists (undo history included), so re-inserting may not
+  # load the new build. Compare the file MPC has mapped with the one just copied.
+  if ssh "$HOST" "P=\$(pidof MPC) && grep -q '$SO' /proc/\$P/maps && ! grep '$SO' /proc/\$P/maps | grep -q \$(stat -c %i '$DEST/$SO')"; then
+    echo "MPC still runs an older $SO: save the project and restart the MPC app (systemctl restart acvs) to load this build"
+  else
+    echo "already registered: remove the plugin from its track and insert it again to load this build"
+  fi
   exit 0
 fi
 if [ $YES = 0 ]; then

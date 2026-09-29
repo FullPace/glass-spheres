@@ -28,6 +28,7 @@ Status (2026-09-29):
 | `layout.conf` | Skin layout (3 tabs), edit with the framework's SkinStudio |
 | `vst.json` | Framework build description |
 | `patches/0001-wrapper-host-transport.patch` | Adds `HAS_HOST_TRANSPORT` to the framework wrapper |
+| `patches/0002-wrapper-option-qlink-zones.patch` | Adds `OPTION_QLINK_ZONES`: a Q-Link turns toggles/options through zones |
 | `third_party/eurorack/` | Vendored Marbles DSP + stmlib subset (MIT; see its README for commits) |
 | `third_party/mpc-vst-plugins/` | Framework, git submodule (no license file upstream, so not vendored) |
 | `test/` | `sim_test.cc`: native run of the engine with a recording cv_out |
@@ -82,7 +83,9 @@ app** — it kills unsaved projects.
 ```
 
 Registration is already done. For a new build: `./deploy.sh`, then the user removes Marbles CV from
-its track and inserts it again — no restart needed.
+its track and inserts it again. **That often isn't enough:** MPC keeps the `.so` loaded while any instance exists
+(undo history included). `deploy.sh` compares the inode MPC has mapped with the new file and says when the app has
+to be restarted instead (ask the user to save first).
 
 ## Device facts that matter here
 
@@ -118,6 +121,14 @@ its track and inserts it again — no restart needed.
 - **Parameter order** = VST index. Nothing is released yet, so it may still change; once a build is
   shared, only append (saved projects store values by index). `uid` `PbMb` and `so` never change.
 - Marbles code is compiled with `-DTEST` (portable C instead of Cortex-M4 asm).
+- **Instances live in zeroed memory** (`calloc` + placement new): the firmware's objects are globals, and some
+  members aren't set by `Init()` (Clouds' `silence_` made that plugin silent; same precaution here).
+- **Clock = MIDI:** notes on the plugin's own track clock the T section (gate = note held, at least 1 ms).
+  MIDI Trigger: Any Note / Learn (the next note becomes the trigger note) / One Note (`midi_note`).
+- **Q-Links:** `OPTION_QLINK_ZONES` (patch 0002) — the user wanted toggles like "0-64 off, above on" instead of
+  the framework's step-per-nudge, which made toggles flicker on a turning knob.
+- **Skin:** `"art": "html"` (browser renderer, real Titillium Web): the default bitmap font was tiny and spaced
+  out. Still the auto-layout look; Clouds has the custom panel look (`../clouds/skin/`).
 
 ## Next steps
 
@@ -127,7 +138,8 @@ its track and inserts it again — no restart needed.
 2. Device checklist with the user: plugin in the browser, skin renders, Q-Links, Clock = MPC sync,
    save/reload project, two instances on different jacks, remove instance → jacks go to 0 V.
 3. CPU check: `third_party/mpc-vst-plugins/tools/bench.sh build/marbles_cv.so <ip>` (see its docs/BENCH.md).
-4. Skin design (currently the auto-layout): SkinStudio via `third_party/mpc-vst-plugins/SkinStudio.command`.
+4. Skin design (currently the auto-layout with the html renderer): the user may want the Clouds-style panel look
+   (`../clouds/skin/gen_layout.py` as the pattern).
 5. Later: register mode / external input via MIDI notes, per-jack calibration, offset for ±5 V.
 6. Before sharing publicly: the name "Marbles" is Mutable Instruments'; the framework has no license
    file; the `HAS_HOST_TRANSPORT` patch could go upstream as a PR.

@@ -6,8 +6,10 @@
   "so": "marbles_cv.so",
   "params": "params.json",
   "layout": "layout.conf",
+  "art": "html",
   "defines": {
-    "HAS_HOST_TRANSPORT": 1
+    "HAS_HOST_TRANSPORT": 1,
+    "OPTION_QLINK_ZONES": 1
   },
   "build": {
     "root": ".",
