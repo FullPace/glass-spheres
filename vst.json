@@ -1,0 +1,41 @@
+{
+  "name": "Marbles CV",
+  "vendor": "Padbangers",
+  "uid": "PbMb",
+  "version": 1000,
+  "so": "marbles_cv.so",
+  "params": "params.json",
+  "layout": "layout.conf",
+  "defines": {
+    "HAS_HOST_TRANSPORT": 1
+  },
+  "build": {
+    "root": ".",
+    "sources": [
+      "src/engine.cc",
+      "src/cv_out.cc",
+      "src/scales.cc",
+      "third_party/eurorack/marbles/random/discrete_distribution_quantizer.cc",
+      "third_party/eurorack/marbles/random/lag_processor.cc",
+      "third_party/eurorack/marbles/random/output_channel.cc",
+      "third_party/eurorack/marbles/random/quantizer.cc",
+      "third_party/eurorack/marbles/random/t_generator.cc",
+      "third_party/eurorack/marbles/random/x_y_generator.cc",
+      "third_party/eurorack/marbles/ramp/ramp_extractor.cc",
+      "third_party/eurorack/marbles/resources.cc",
+      "third_party/eurorack/stmlib/dsp/units.cc",
+      "third_party/eurorack/stmlib/utils/random.cc"
+    ],
+    "cflags": [
+      "-DTEST",
+      "-Ithird_party/eurorack",
+      "-Ithird_party/mpc-vst-plugins/wrapper",
+      "-Wno-unused-parameter",
+      "-Wno-missing-field-initializers"
+    ],
+    "libs": [
+      "-lm",
+      "-lpthread"
+    ]
+  }
+}
