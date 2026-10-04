@@ -13,8 +13,11 @@ makes no sound itself: it plays other tracks over **MIDI**, or analog gear over 
 - A built-in manual on its own tab. **Beta:** the first release; please report what you find.
 
 ![Glass Spheres main page](docs/glass-spheres-main.png)
+![Glass Spheres Y and clock page](docs/glass-spheres-y-clock.png)
 ![Glass Spheres modulation page](docs/glass-spheres-modulation.png)
-![Glass Spheres MIDI output](docs/glass-spheres-output.png)
+![Glass Spheres MIDI output](docs/glass-spheres-output-midi.png)
+![Glass Spheres CV output](docs/glass-spheres-output-cv.png)
+![Glass Spheres manual](docs/glass-spheres-manual.png)
 
 ## Requirements
 
