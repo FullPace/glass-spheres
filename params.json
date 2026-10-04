@@ -1,46 +1,1338 @@
 {
-  "name": "Marbles CV",
+  "name": "Glass Spheres",
   "params": [
-    {"key": "t_rate", "name": "T Rate", "min": 0.0, "max": 1.0, "default": 0.5},
-    {"key": "t_bias", "name": "T Bias", "min": 0.0, "max": 1.0, "default": 0.5},
-    {"key": "t_jitter", "name": "T Jitter", "min": 0.0, "max": 1.0, "default": 0.0},
-    {"key": "t_model", "name": "T Mode", "options": ["Coin Toss", "Clusters", "Drums", "Independent", "Divider", "Three States", "Markov"], "default": 0},
-    {"key": "t_range", "name": "T Range", "options": ["1/4x", "1x", "4x"], "default": 1},
-    {"key": "t_pw", "name": "Gate Length", "min": 0.0, "max": 1.0, "default": 0.5},
-    {"key": "t_pw_random", "name": "Gate Random", "min": 0.0, "max": 1.0, "default": 0.0},
-    {"key": "deja_vu", "name": "Deja Vu", "min": 0.0, "max": 1.0, "default": 0.5},
-    {"key": "length", "name": "Length", "options": ["1", "2", "3", "4", "5", "6", "7", "8", "10", "12", "14", "16"], "default": 7},
-    {"key": "t_deja_vu", "name": "T Deja Vu", "options": ["Off", "On", "Locked"], "default": 0},
-    {"key": "x_deja_vu", "name": "X Deja Vu", "options": ["Off", "On", "Locked"], "default": 0},
-    {"key": "x_spread", "name": "X Spread", "min": 0.0, "max": 1.0, "default": 0.5},
-    {"key": "x_bias", "name": "X Bias", "min": 0.0, "max": 1.0, "default": 0.5},
-    {"key": "x_steps", "name": "X Steps", "min": 0.0, "max": 1.0, "default": 0.5},
-    {"key": "x_mode", "name": "X Mode", "options": ["Identical", "Bump", "Tilt"], "default": 0},
-    {"key": "x_range", "name": "X Range", "options": ["0-2V", "0-5V", "+/-5V"], "default": 1},
-    {"key": "x_scale", "name": "X Scale", "options": ["Major", "Minor", "Pentatonic", "Pelog", "Bhairav", "Shri"], "default": 0},
-    {"key": "x_clock", "name": "X Clock", "options": ["T1+T2+T3", "T1", "T2", "T3"], "default": 0},
-    {"key": "y_spread", "name": "Y Spread", "min": 0.0, "max": 1.0, "default": 0.5},
-    {"key": "y_bias", "name": "Y Bias", "min": 0.0, "max": 1.0, "default": 0.5},
-    {"key": "y_steps", "name": "Y Steps", "min": 0.0, "max": 1.0, "default": 0.0},
-    {"key": "y_divider", "name": "Y Divider", "options": ["1/64", "1/48", "1/32", "1/24", "1/16", "1/12", "1/8", "1/6", "1/4", "1/3", "1/2", "1/1"], "default": 6},
-    {"key": "y_range", "name": "Y Range", "options": ["0-2V", "0-5V", "+/-5V"], "default": 1},
-    {"key": "clock", "name": "Clock", "options": ["Internal", "MPC", "MIDI"], "default": 0},
-    {"key": "clock_div", "name": "MPC Clock", "options": ["1/4", "1/8", "1/16", "1/32"], "default": 2},
-    {"key": "out_t1", "name": "T1 Out", "options": ["Off", "CV 1", "CV 2", "CV 3", "CV 4", "CV 5", "CV 6", "CV 7", "CV 8"], "default": 2},
-    {"key": "out_t2", "name": "T2 Out", "options": ["Off", "CV 1", "CV 2", "CV 3", "CV 4", "CV 5", "CV 6", "CV 7", "CV 8"], "default": 0},
-    {"key": "out_t3", "name": "T3 Out", "options": ["Off", "CV 1", "CV 2", "CV 3", "CV 4", "CV 5", "CV 6", "CV 7", "CV 8"], "default": 0},
-    {"key": "out_x1", "name": "X1 Out", "options": ["Off", "CV 1", "CV 2", "CV 3", "CV 4", "CV 5", "CV 6", "CV 7", "CV 8"], "default": 1},
-    {"key": "out_x2", "name": "X2 Out", "options": ["Off", "CV 1", "CV 2", "CV 3", "CV 4", "CV 5", "CV 6", "CV 7", "CV 8"], "default": 0},
-    {"key": "out_x3", "name": "X3 Out", "options": ["Off", "CV 1", "CV 2", "CV 3", "CV 4", "CV 5", "CV 6", "CV 7", "CV 8"], "default": 0},
-    {"key": "out_y", "name": "Y Out", "options": ["Off", "CV 1", "CV 2", "CV 3", "CV 4", "CV 5", "CV 6", "CV 7", "CV 8"], "default": 0},
-    {"key": "midi_trigger", "name": "MIDI Trigger", "options": ["Any Note", "Learn", "One Note"], "default": 0},
-    {"key": "midi_note", "name": "Trigger Note", "min": 0, "max": 127, "display": "int", "default": 36}
+    {
+      "key": "t_rate",
+      "name": "T Rate",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "t_bias",
+      "name": "T Bias",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "t_jitter",
+      "name": "T Jitter",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "key": "t_model",
+      "name": "T Mode",
+      "options": [
+        "Coin Toss",
+        "Clusters",
+        "Drums",
+        "Independent",
+        "Divider",
+        "Three States",
+        "Markov"
+      ],
+      "default": 0
+    },
+    {
+      "key": "t_range",
+      "name": "T Range",
+      "options": [
+        "1/4x",
+        "1x",
+        "4x"
+      ],
+      "default": 1
+    },
+    {
+      "key": "t_pw",
+      "name": "Gate Length",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "t_pw_random",
+      "name": "Gate Random",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "key": "deja_vu",
+      "name": "Deja Vu",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "length",
+      "name": "Length",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "10",
+        "12",
+        "14",
+        "16"
+      ],
+      "default": 7
+    },
+    {
+      "key": "t_deja_vu",
+      "name": "T Deja Vu",
+      "options": [
+        "Off",
+        "On",
+        "Locked"
+      ],
+      "default": 0
+    },
+    {
+      "key": "x_deja_vu",
+      "name": "X Deja Vu",
+      "options": [
+        "Off",
+        "On",
+        "Locked"
+      ],
+      "default": 0
+    },
+    {
+      "key": "x_spread",
+      "name": "X Spread",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "x_bias",
+      "name": "X Bias",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "x_steps",
+      "name": "X Steps",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "x_mode",
+      "name": "X Mode",
+      "options": [
+        "Identical",
+        "Bump",
+        "Tilt"
+      ],
+      "default": 0
+    },
+    {
+      "key": "x_range",
+      "name": "X Range",
+      "options": [
+        "0-2V",
+        "0-5V",
+        "+/-5V"
+      ],
+      "default": 1
+    },
+    {
+      "key": "x_scale",
+      "name": "X Scale",
+      "options": [
+        "Major",
+        "Minor",
+        "Pentatonic",
+        "Pelog",
+        "Bhairav",
+        "Shri"
+      ],
+      "default": 0
+    },
+    {
+      "key": "x_clock",
+      "name": "X Clock",
+      "options": [
+        "T1+T2+T3",
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "default": 0
+    },
+    {
+      "key": "y_spread",
+      "name": "Y Spread",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "y_bias",
+      "name": "Y Bias",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5
+    },
+    {
+      "key": "y_steps",
+      "name": "Y Steps",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.0
+    },
+    {
+      "key": "y_divider",
+      "name": "Y Divider",
+      "options": [
+        "1/64",
+        "1/48",
+        "1/32",
+        "1/24",
+        "1/16",
+        "1/12",
+        "1/8",
+        "1/6",
+        "1/4",
+        "1/3",
+        "1/2",
+        "1/1"
+      ],
+      "default": 6
+    },
+    {
+      "key": "y_range",
+      "name": "Y Range",
+      "options": [
+        "0-2V",
+        "0-5V",
+        "+/-5V"
+      ],
+      "default": 1
+    },
+    {
+      "key": "clock",
+      "name": "Clock",
+      "options": [
+        "Internal",
+        "MPC",
+        "MIDI"
+      ],
+      "default": 0
+    },
+    {
+      "key": "clock_div",
+      "name": "MPC Clock",
+      "options": [
+        "1/4",
+        "1/8",
+        "1/16",
+        "1/32"
+      ],
+      "default": 2
+    },
+    {
+      "key": "out_t1",
+      "name": "T1 Out",
+      "options": [
+        "Off",
+        "CV 1",
+        "CV 2",
+        "CV 3",
+        "CV 4",
+        "CV 5",
+        "CV 6",
+        "CV 7",
+        "CV 8"
+      ],
+      "default": 2
+    },
+    {
+      "key": "out_t2",
+      "name": "T2 Out",
+      "options": [
+        "Off",
+        "CV 1",
+        "CV 2",
+        "CV 3",
+        "CV 4",
+        "CV 5",
+        "CV 6",
+        "CV 7",
+        "CV 8"
+      ],
+      "default": 0
+    },
+    {
+      "key": "out_t3",
+      "name": "T3 Out",
+      "options": [
+        "Off",
+        "CV 1",
+        "CV 2",
+        "CV 3",
+        "CV 4",
+        "CV 5",
+        "CV 6",
+        "CV 7",
+        "CV 8"
+      ],
+      "default": 0
+    },
+    {
+      "key": "out_x1",
+      "name": "X1 Out",
+      "options": [
+        "Off",
+        "CV 1",
+        "CV 2",
+        "CV 3",
+        "CV 4",
+        "CV 5",
+        "CV 6",
+        "CV 7",
+        "CV 8"
+      ],
+      "default": 1
+    },
+    {
+      "key": "out_x2",
+      "name": "X2 Out",
+      "options": [
+        "Off",
+        "CV 1",
+        "CV 2",
+        "CV 3",
+        "CV 4",
+        "CV 5",
+        "CV 6",
+        "CV 7",
+        "CV 8"
+      ],
+      "default": 0
+    },
+    {
+      "key": "out_x3",
+      "name": "X3 Out",
+      "options": [
+        "Off",
+        "CV 1",
+        "CV 2",
+        "CV 3",
+        "CV 4",
+        "CV 5",
+        "CV 6",
+        "CV 7",
+        "CV 8"
+      ],
+      "default": 0
+    },
+    {
+      "key": "out_y",
+      "name": "Y Out",
+      "options": [
+        "Off",
+        "CV 1",
+        "CV 2",
+        "CV 3",
+        "CV 4",
+        "CV 5",
+        "CV 6",
+        "CV 7",
+        "CV 8"
+      ],
+      "default": 0
+    },
+    {
+      "key": "midi_trigger",
+      "name": "MIDI Trigger",
+      "options": [
+        "Any Note",
+        "Learn",
+        "One Note"
+      ],
+      "default": 0
+    },
+    {
+      "key": "midi_note",
+      "name": "Trigger Note",
+      "min": 0,
+      "max": 127,
+      "display": "int",
+      "default": 36
+    },
+    {
+      "key": "output",
+      "name": "Output",
+      "options": [
+        "CV",
+        "MIDI"
+      ],
+      "default": 0
+    },
+    {
+      "key": "v1_gate",
+      "name": "Voice 1 Gate",
+      "options": [
+        "Off",
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "default": 1
+    },
+    {
+      "key": "v1_pitch",
+      "name": "Voice 1 Pitch",
+      "options": [
+        "X1",
+        "X2",
+        "X3",
+        "Y",
+        "Fixed"
+      ],
+      "default": 0
+    },
+    {
+      "key": "v1_channel",
+      "name": "Voice 1 Channel",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16"
+      ],
+      "default": 0
+    },
+    {
+      "key": "v1_note",
+      "name": "Voice 1 Note",
+      "min": 0,
+      "max": 127,
+      "default": 48,
+      "display": "int"
+    },
+    {
+      "key": "v2_gate",
+      "name": "Voice 2 Gate",
+      "options": [
+        "Off",
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "default": 2
+    },
+    {
+      "key": "v2_pitch",
+      "name": "Voice 2 Pitch",
+      "options": [
+        "X1",
+        "X2",
+        "X3",
+        "Y",
+        "Fixed"
+      ],
+      "default": 1
+    },
+    {
+      "key": "v2_channel",
+      "name": "Voice 2 Channel",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16"
+      ],
+      "default": 1
+    },
+    {
+      "key": "v2_note",
+      "name": "Voice 2 Note",
+      "min": 0,
+      "max": 127,
+      "default": 48,
+      "display": "int"
+    },
+    {
+      "key": "v3_gate",
+      "name": "Voice 3 Gate",
+      "options": [
+        "Off",
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "default": 3
+    },
+    {
+      "key": "v3_pitch",
+      "name": "Voice 3 Pitch",
+      "options": [
+        "X1",
+        "X2",
+        "X3",
+        "Y",
+        "Fixed"
+      ],
+      "default": 2
+    },
+    {
+      "key": "v3_channel",
+      "name": "Voice 3 Channel",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16"
+      ],
+      "default": 2
+    },
+    {
+      "key": "v3_note",
+      "name": "Voice 3 Note",
+      "min": 0,
+      "max": 127,
+      "default": 48,
+      "display": "int"
+    },
+    {
+      "key": "cc1_source",
+      "name": "CC 1 Source",
+      "options": [
+        "Off",
+        "X1",
+        "X2",
+        "X3",
+        "Y"
+      ],
+      "default": 4
+    },
+    {
+      "key": "cc1_channel",
+      "name": "CC 1 Channel",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16"
+      ],
+      "default": 0
+    },
+    {
+      "key": "cc1_number",
+      "name": "CC 1 Number",
+      "min": 0,
+      "max": 127,
+      "default": 1,
+      "display": "int"
+    },
+    {
+      "key": "cc2_source",
+      "name": "CC 2 Source",
+      "options": [
+        "Off",
+        "X1",
+        "X2",
+        "X3",
+        "Y"
+      ],
+      "default": 0
+    },
+    {
+      "key": "cc2_channel",
+      "name": "CC 2 Channel",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16"
+      ],
+      "default": 0
+    },
+    {
+      "key": "cc2_number",
+      "name": "CC 2 Number",
+      "min": 0,
+      "max": 127,
+      "default": 74,
+      "display": "int"
+    },
+    {
+      "key": "env1_attack",
+      "name": "Env 1 Attack",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.1,
+      "dynamic_display": true
+    },
+    {
+      "key": "env1_decay",
+      "name": "Env 1 Decay",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5,
+      "dynamic_display": true
+    },
+    {
+      "key": "env1_sustain",
+      "name": "Env 1 Sustain",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.7
+    },
+    {
+      "key": "env1_release",
+      "name": "Env 1 Release",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5,
+      "dynamic_display": true
+    },
+    {
+      "key": "env1_trig",
+      "name": "Env 1 Trigger",
+      "options": [
+        "MIDI",
+        "LFO 1",
+        "LFO 2",
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "default": 0
+    },
+    {
+      "key": "env2_attack",
+      "name": "Env 2 Attack",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.1,
+      "dynamic_display": true
+    },
+    {
+      "key": "env2_decay",
+      "name": "Env 2 Decay",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5,
+      "dynamic_display": true
+    },
+    {
+      "key": "env2_sustain",
+      "name": "Env 2 Sustain",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.7
+    },
+    {
+      "key": "env2_release",
+      "name": "Env 2 Release",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5,
+      "dynamic_display": true
+    },
+    {
+      "key": "env2_trig",
+      "name": "Env 2 Trigger",
+      "options": [
+        "MIDI",
+        "LFO 1",
+        "LFO 2",
+        "T1",
+        "T2",
+        "T3"
+      ],
+      "default": 0
+    },
+    {
+      "key": "lfo1_shape",
+      "name": "LFO 1 Shape",
+      "options": [
+        "Sine",
+        "Triangle",
+        "Saw Up",
+        "Saw Down",
+        "Square",
+        "S&H",
+        "Smooth Rnd"
+      ],
+      "default": 0
+    },
+    {
+      "key": "lfo1_rate",
+      "name": "LFO 1 Rate",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5,
+      "dynamic_display": true
+    },
+    {
+      "key": "lfo1_sync",
+      "name": "LFO 1 Sync",
+      "options": [
+        "Off",
+        "On"
+      ],
+      "default": 0
+    },
+    {
+      "key": "lfo1_div",
+      "name": "LFO 1 Division",
+      "options": [
+        "4 Bars",
+        "2 Bars",
+        "1 Bar",
+        "1/2",
+        "1/4",
+        "1/8",
+        "1/16",
+        "1/32"
+      ],
+      "default": 4
+    },
+    {
+      "key": "lfo2_shape",
+      "name": "LFO 2 Shape",
+      "options": [
+        "Sine",
+        "Triangle",
+        "Saw Up",
+        "Saw Down",
+        "Square",
+        "S&H",
+        "Smooth Rnd"
+      ],
+      "default": 0
+    },
+    {
+      "key": "lfo2_rate",
+      "name": "LFO 2 Rate",
+      "min": 0.0,
+      "max": 1.0,
+      "default": 0.5,
+      "dynamic_display": true
+    },
+    {
+      "key": "lfo2_sync",
+      "name": "LFO 2 Sync",
+      "options": [
+        "Off",
+        "On"
+      ],
+      "default": 0
+    },
+    {
+      "key": "lfo2_div",
+      "name": "LFO 2 Division",
+      "options": [
+        "4 Bars",
+        "2 Bars",
+        "1 Bar",
+        "1/2",
+        "1/4",
+        "1/8",
+        "1/16",
+        "1/32"
+      ],
+      "default": 4
+    },
+    {
+      "key": "mod1_src",
+      "name": "Mod 1 Source",
+      "options": [
+        "Off",
+        "LFO 1",
+        "LFO 2",
+        "Env 1",
+        "Env 2",
+        "T1",
+        "T2",
+        "T3",
+        "X1",
+        "X2",
+        "X3",
+        "Y",
+        "Velocity"
+      ],
+      "default": 0
+    },
+    {
+      "key": "mod1_dst",
+      "name": "Mod 1 Dest",
+      "options": [
+        "Off",
+        "T Rate",
+        "T Bias",
+        "Jitter",
+        "Deja Vu",
+        "Steps",
+        "Spread",
+        "X Bias",
+        "T Clock",
+        "X Clock"
+      ],
+      "default": 0
+    },
+    {
+      "key": "mod1_amt",
+      "name": "Mod 1 Amount",
+      "min": -100.0,
+      "max": 100.0,
+      "unit": "%",
+      "display": "int",
+      "default": 0.0
+    },
+    {
+      "key": "mod2_src",
+      "name": "Mod 2 Source",
+      "options": [
+        "Off",
+        "LFO 1",
+        "LFO 2",
+        "Env 1",
+        "Env 2",
+        "T1",
+        "T2",
+        "T3",
+        "X1",
+        "X2",
+        "X3",
+        "Y",
+        "Velocity"
+      ],
+      "default": 0
+    },
+    {
+      "key": "mod2_dst",
+      "name": "Mod 2 Dest",
+      "options": [
+        "Off",
+        "T Rate",
+        "T Bias",
+        "Jitter",
+        "Deja Vu",
+        "Steps",
+        "Spread",
+        "X Bias",
+        "T Clock",
+        "X Clock"
+      ],
+      "default": 0
+    },
+    {
+      "key": "mod2_amt",
+      "name": "Mod 2 Amount",
+      "min": -100.0,
+      "max": 100.0,
+      "unit": "%",
+      "display": "int",
+      "default": 0.0
+    },
+    {
+      "key": "mod3_src",
+      "name": "Mod 3 Source",
+      "options": [
+        "Off",
+        "LFO 1",
+        "LFO 2",
+        "Env 1",
+        "Env 2",
+        "T1",
+        "T2",
+        "T3",
+        "X1",
+        "X2",
+        "X3",
+        "Y",
+        "Velocity"
+      ],
+      "default": 0
+    },
+    {
+      "key": "mod3_dst",
+      "name": "Mod 3 Dest",
+      "options": [
+        "Off",
+        "T Rate",
+        "T Bias",
+        "Jitter",
+        "Deja Vu",
+        "Steps",
+        "Spread",
+        "X Bias",
+        "T Clock",
+        "X Clock"
+      ],
+      "default": 0
+    },
+    {
+      "key": "mod3_amt",
+      "name": "Mod 3 Amount",
+      "min": -100.0,
+      "max": 100.0,
+      "unit": "%",
+      "display": "int",
+      "default": 0.0
+    },
+    {
+      "key": "mod4_src",
+      "name": "Mod 4 Source",
+      "options": [
+        "Off",
+        "LFO 1",
+        "LFO 2",
+        "Env 1",
+        "Env 2",
+        "T1",
+        "T2",
+        "T3",
+        "X1",
+        "X2",
+        "X3",
+        "Y",
+        "Velocity"
+      ],
+      "default": 0
+    },
+    {
+      "key": "mod4_dst",
+      "name": "Mod 4 Dest",
+      "options": [
+        "Off",
+        "T Rate",
+        "T Bias",
+        "Jitter",
+        "Deja Vu",
+        "Steps",
+        "Spread",
+        "X Bias",
+        "T Clock",
+        "X Clock"
+      ],
+      "default": 0
+    },
+    {
+      "key": "mod4_amt",
+      "name": "Mod 4 Amount",
+      "min": -100.0,
+      "max": 100.0,
+      "unit": "%",
+      "display": "int",
+      "default": 0.0
+    },
+    {
+      "key": "mod5_src",
+      "name": "Mod 5 Source",
+      "options": [
+        "Off",
+        "LFO 1",
+        "LFO 2",
+        "Env 1",
+        "Env 2",
+        "T1",
+        "T2",
+        "T3",
+        "X1",
+        "X2",
+        "X3",
+        "Y",
+        "Velocity"
+      ],
+      "default": 0
+    },
+    {
+      "key": "mod5_dst",
+      "name": "Mod 5 Dest",
+      "options": [
+        "Off",
+        "T Rate",
+        "T Bias",
+        "Jitter",
+        "Deja Vu",
+        "Steps",
+        "Spread",
+        "X Bias",
+        "T Clock",
+        "X Clock"
+      ],
+      "default": 0
+    },
+    {
+      "key": "mod5_amt",
+      "name": "Mod 5 Amount",
+      "min": -100.0,
+      "max": 100.0,
+      "unit": "%",
+      "display": "int",
+      "default": 0.0
+    },
+    {
+      "key": "mod6_src",
+      "name": "Mod 6 Source",
+      "options": [
+        "Off",
+        "LFO 1",
+        "LFO 2",
+        "Env 1",
+        "Env 2",
+        "T1",
+        "T2",
+        "T3",
+        "X1",
+        "X2",
+        "X3",
+        "Y",
+        "Velocity"
+      ],
+      "default": 0
+    },
+    {
+      "key": "mod6_dst",
+      "name": "Mod 6 Dest",
+      "options": [
+        "Off",
+        "T Rate",
+        "T Bias",
+        "Jitter",
+        "Deja Vu",
+        "Steps",
+        "Spread",
+        "X Bias",
+        "T Clock",
+        "X Clock"
+      ],
+      "default": 0
+    },
+    {
+      "key": "mod6_amt",
+      "name": "Mod 6 Amount",
+      "min": -100.0,
+      "max": 100.0,
+      "unit": "%",
+      "display": "int",
+      "default": 0.0
+    },
+    {
+      "key": "mod7_src",
+      "name": "Mod 7 Source",
+      "options": [
+        "Off",
+        "LFO 1",
+        "LFO 2",
+        "Env 1",
+        "Env 2",
+        "T1",
+        "T2",
+        "T3",
+        "X1",
+        "X2",
+        "X3",
+        "Y",
+        "Velocity"
+      ],
+      "default": 0
+    },
+    {
+      "key": "mod7_dst",
+      "name": "Mod 7 Dest",
+      "options": [
+        "Off",
+        "T Rate",
+        "T Bias",
+        "Jitter",
+        "Deja Vu",
+        "Steps",
+        "Spread",
+        "X Bias",
+        "T Clock",
+        "X Clock"
+      ],
+      "default": 0
+    },
+    {
+      "key": "mod7_amt",
+      "name": "Mod 7 Amount",
+      "min": -100.0,
+      "max": 100.0,
+      "unit": "%",
+      "display": "int",
+      "default": 0.0
+    },
+    {
+      "key": "mod8_src",
+      "name": "Mod 8 Source",
+      "options": [
+        "Off",
+        "LFO 1",
+        "LFO 2",
+        "Env 1",
+        "Env 2",
+        "T1",
+        "T2",
+        "T3",
+        "X1",
+        "X2",
+        "X3",
+        "Y",
+        "Velocity"
+      ],
+      "default": 0
+    },
+    {
+      "key": "mod8_dst",
+      "name": "Mod 8 Dest",
+      "options": [
+        "Off",
+        "T Rate",
+        "T Bias",
+        "Jitter",
+        "Deja Vu",
+        "Steps",
+        "Spread",
+        "X Bias",
+        "T Clock",
+        "X Clock"
+      ],
+      "default": 0
+    },
+    {
+      "key": "mod8_amt",
+      "name": "Mod 8 Amount",
+      "min": -100.0,
+      "max": 100.0,
+      "unit": "%",
+      "display": "int",
+      "default": 0.0
+    },
+    {
+      "key": "manual_page",
+      "name": "Manual",
+      "options": [
+        "Basics",
+        "T Section",
+        "X Section",
+        "Y & Deja Vu",
+        "Clock",
+        "Modulation",
+        "CV Output",
+        "MIDI Output"
+      ],
+      "default": 0
+    }
   ],
   "sections": [
-    {"label": "T", "keys": ["t_rate", "t_bias", "t_jitter", "t_model", "t_range", "t_pw", "t_pw_random", "clock", "clock_div", "midi_trigger", "midi_note"]},
-    {"label": "X", "keys": ["x_spread", "x_bias", "x_steps", "x_mode", "x_range", "x_scale", "x_clock"]},
-    {"label": "Deja Vu", "keys": ["deja_vu", "length", "t_deja_vu", "x_deja_vu"]},
-    {"label": "Y", "keys": ["y_spread", "y_bias", "y_steps", "y_divider", "y_range"]},
-    {"label": "Outputs", "keys": ["out_t1", "out_t2", "out_t3", "out_x1", "out_x2", "out_x3", "out_y"]}
+    {
+      "label": "T",
+      "keys": [
+        "t_rate",
+        "t_bias",
+        "t_jitter",
+        "t_model",
+        "t_range",
+        "t_pw",
+        "t_pw_random",
+        "clock",
+        "clock_div",
+        "midi_trigger",
+        "midi_note"
+      ]
+    },
+    {
+      "label": "X",
+      "keys": [
+        "x_spread",
+        "x_bias",
+        "x_steps",
+        "x_mode",
+        "x_range",
+        "x_scale",
+        "x_clock"
+      ]
+    },
+    {
+      "label": "Deja Vu",
+      "keys": [
+        "deja_vu",
+        "length",
+        "t_deja_vu",
+        "x_deja_vu"
+      ]
+    },
+    {
+      "label": "Y",
+      "keys": [
+        "y_spread",
+        "y_bias",
+        "y_steps",
+        "y_divider",
+        "y_range"
+      ]
+    },
+    {
+      "label": "Outputs",
+      "keys": [
+        "out_t1",
+        "out_t2",
+        "out_t3",
+        "out_x1",
+        "out_x2",
+        "out_x3",
+        "out_y"
+      ]
+    },
+    {
+      "label": "MIDI Output",
+      "keys": [
+        "output",
+        "v1_gate",
+        "v1_pitch",
+        "v1_channel",
+        "v1_note",
+        "v2_gate",
+        "v2_pitch",
+        "v2_channel",
+        "v2_note",
+        "v3_gate",
+        "v3_pitch",
+        "v3_channel",
+        "v3_note",
+        "cc1_source",
+        "cc1_channel",
+        "cc1_number",
+        "cc2_source",
+        "cc2_channel",
+        "cc2_number"
+      ]
+    },
+    {
+      "label": "Envelopes",
+      "keys": [
+        "env1_attack",
+        "env1_decay",
+        "env1_sustain",
+        "env1_release",
+        "env1_trig",
+        "env2_attack",
+        "env2_decay",
+        "env2_sustain",
+        "env2_release",
+        "env2_trig"
+      ]
+    },
+    {
+      "label": "LFOs",
+      "keys": [
+        "lfo1_shape",
+        "lfo1_rate",
+        "lfo1_sync",
+        "lfo1_div",
+        "lfo2_shape",
+        "lfo2_rate",
+        "lfo2_sync",
+        "lfo2_div"
+      ]
+    },
+    {
+      "label": "Matrix",
+      "keys": [
+        "mod1_src",
+        "mod1_dst",
+        "mod1_amt",
+        "mod2_src",
+        "mod2_dst",
+        "mod2_amt",
+        "mod3_src",
+        "mod3_dst",
+        "mod3_amt",
+        "mod4_src",
+        "mod4_dst",
+        "mod4_amt",
+        "mod5_src",
+        "mod5_dst",
+        "mod5_amt",
+        "mod6_src",
+        "mod6_dst",
+        "mod6_amt",
+        "mod7_src",
+        "mod7_dst",
+        "mod7_amt",
+        "mod8_src",
+        "mod8_dst",
+        "mod8_amt"
+      ]
+    }
   ]
 }

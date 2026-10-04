@@ -1,0 +1,9 @@
+build/
+dist/
+assets/
+test/sim_test
+test/*.dSYM
+cv/*.so
+tools/seqdump
+._*
+.DS_Store

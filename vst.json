@@ -1,9 +1,9 @@
 {
-  "name": "Marbles CV",
+  "name": "Glass Spheres",
   "vendor": "Padbangers",
   "uid": "PbMb",
   "version": 1000,
-  "so": "marbles_cv.so",
+  "so": "glass_spheres.so",
   "params": "params.json",
   "layout": "layout.conf",
   "art": "html",
@@ -16,6 +16,8 @@
     "sources": [
       "src/engine.cc",
       "src/cv_out.cc",
+      "src/midi_out.cc",
+      "src/mod.cc",
       "src/scales.cc",
       "third_party/eurorack/marbles/random/discrete_distribution_quantizer.cc",
       "third_party/eurorack/marbles/random/lag_processor.cc",
@@ -37,6 +39,7 @@
     ],
     "libs": [
       "-lm",
+      "-ldl",
       "-lpthread"
     ]
   }

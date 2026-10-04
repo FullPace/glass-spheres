@@ -8,17 +8,18 @@ cd "$(dirname "$0")"
 YES=0
 [ "${1:-}" = --yes ] && { YES=1; shift; }
 HOST="${1:-mpcx}"
-NAME="Padbangers - VST - Marbles CV"
-SO=marbles_cv.so
+NAME="Padbangers - VST - Glass Spheres"
+SO=glass_spheres.so
 DEST="/sdcard/Synths/$NAME"
 SETTINGS=/media/az01-internal/Settings/MPC/MPC.settings
 
 [ -f "build/$SO" ] || { echo "build/$SO missing: run ./build.sh" >&2; exit 1; }
 
 # 1. files: skin folder + .so, staged next to the live copy and swapped in with mv
-tar -C build/skin -cf - "$NAME" | ssh "$HOST" "rm -rf '$DEST.new' && mkdir -p /tmp/marbles-cv && tar -C /tmp/marbles-cv -xf - && mv '/tmp/marbles-cv/$NAME' '$DEST.new'"
-scp -q "build/$SO" "$HOST:/tmp/marbles-cv/$SO"
-ssh "$HOST" "cp '/tmp/marbles-cv/$SO' '$DEST.new/$SO' && rm -rf '$DEST.old' && { [ -d '$DEST' ] && mv '$DEST' '$DEST.old' || true; } && mv '$DEST.new' '$DEST' && rm -rf '$DEST.old' /tmp/marbles-cv"
+tar -C build/skin -cf - "$NAME" | ssh "$HOST" "rm -rf '$DEST.new' && mkdir -p /tmp/glass-spheres && tar -C /tmp/glass-spheres -xf - && mv '/tmp/glass-spheres/$NAME' '$DEST.new'"
+scp -q "build/$SO" "$HOST:/tmp/glass-spheres/$SO"
+# An unchanged .so keeps its file (same inode), so a skin-only update doesn't look like a stale build below.
+ssh "$HOST" "if [ -f '$DEST/$SO' ] && [ \"\$(md5sum < '$DEST/$SO')\" = \"\$(md5sum < '/tmp/glass-spheres/$SO')\" ]; then mv '$DEST/$SO' '$DEST.new/$SO'; else cp '/tmp/glass-spheres/$SO' '$DEST.new/$SO'; fi && rm -rf '$DEST.old' && { [ -d '$DEST' ] && mv '$DEST' '$DEST.old' || true; } && mv '$DEST.new' '$DEST' && rm -rf '$DEST.old' /tmp/glass-spheres"
 LOCAL_MD5=$(md5 -q "build/$SO" 2>/dev/null || md5sum "build/$SO" | cut -d' ' -f1)
 REMOTE_MD5=$(ssh "$HOST" "md5sum '$DEST/$SO'" | cut -d' ' -f1)
 [ "$LOCAL_MD5" = "$REMOTE_MD5" ] || { echo "md5 mismatch after copy" >&2; exit 1; }
@@ -46,12 +47,12 @@ set -e
 systemctl stop acvs
 trap 'systemctl start acvs' EXIT
 i=0; while pidof MPC >/dev/null && [ \$i -lt 30 ]; do sleep 1; i=\$((i + 1)); done
-cp '$SETTINGS' '$SETTINGS.bak-marbles_cv-'\$(date +%Y%m%d-%H%M%S)
-cat > /tmp/marbles-cv-entry.xml <<'XML'
+cp '$SETTINGS' '$SETTINGS.bak-glass_spheres-'\$(date +%Y%m%d-%H%M%S)
+cat > /tmp/glass-spheres-entry.xml <<'XML'
 $ENTRY
 XML
 # same edit as the catalog installers: add the entry to <VALUE name="pluginList-arm"><KNOWNPLUGINS>
-awk -v entryfile=/tmp/marbles-cv-entry.xml '
+awk -v entryfile=/tmp/glass-spheres-entry.xml '
   BEGIN { while ((getline l < entryfile) > 0) entry = entry l }
   /<VALUE name="pluginList-arm">/ { inlist = 1 }
   inlist && /<\/KNOWNPLUGINS>/ && !done { ind = \$0; sub(/<.*/, "", ind); print ind "  " entry; done = 1; inlist = 0 }
@@ -60,6 +61,6 @@ awk -v entryfile=/tmp/marbles-cv-entry.xml '
 [ "\$(grep -c 'file="$DEST/$SO"' '$SETTINGS.new')" = 1 ] || { rm -f '$SETTINGS.new'; echo "settings edit failed" >&2; exit 1; }
 mv '$SETTINGS.new' '$SETTINGS'
 sync
-rm -f /tmp/marbles-cv-entry.xml
+rm -f /tmp/glass-spheres-entry.xml
 echo "registered; starting MPC"
 EOF

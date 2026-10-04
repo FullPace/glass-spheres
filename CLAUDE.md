@@ -1,39 +1,35 @@
-# Marbles CV — runbook
+# Glass Spheres — runbook
 
-Everything needed to build, test, deploy and continue the Marbles CV plugin lives in this folder.
+Everything needed to build, test, deploy and continue Glass Spheres lives in this repo.
 Read this first, then `cv/README.md` (the CV protocol) and `README.md` (what the plugin is).
 
 ## What this is
 
-A native MPC OS plugin (VST2, built with the [mpc-vst-plugins](https://github.com/sd88me/mpc-vst-plugins)
-framework) that runs Mutable Instruments Marbles' random generators (MIT code, vendored) and writes
-its seven outputs (t1-t3, X1-X3, Y) to the MPC X's CV/Gate jacks. The plugin renders silence.
-
-Status (2026-09-29):
-- CV protocol found and verified by ear with an oscillator on CV1: octaves 1/2/3 V are clean, the
-  LSB (sub-semitone) is audible. The user's oscillator was a drone oscillator, so smooth sweeps could
-  not be judged.
-- Plugin v0.1 built, host test PASSED, native simulation OK, installed and registered on the device.
-- **Not yet confirmed on the device:** the plugin actually moving the jacks, the skin, Q-Links,
-  Clock = MPC sync, project save/reload, several instances. The user is getting a proper VCO.
+Glass Spheres (renamed from "Marbles CV" on 2026-10-04; the repo was split from mpc-x-hacks `marbles/` the same day)
+is a native MPC OS plugin (VST2, built with the [mpc-vst-plugins](https://github.com/sd88me/mpc-vst-plugins)
+framework) that runs Mutable Instruments Marbles' random generators (MIT code, vendored) and sends its seven outputs
+(t1-t3, X1-X3, Y) to the MPC X's CV/Gate jacks or out of its own MIDI port. The plugin renders silence. The skin
+follows Overcast's (github.com/FullPace/overcast): same knobs, tags, background frame, focus marks and `post_build.py`
+(keep the two in sync). The user designs the background (`assets/`, copied to `skin/glass_spheres_bg.jpg`).
 
 ## Folder layout
 
 | Path | What |
 |---|---|
-| `src/engine.cc` | Replaces the firmware main loop: params → Marbles generators → jacks |
+| `src/engine.cc` | Replaces the firmware main loop: params + modulation → Marbles generators → jacks or MIDI |
 | `src/cv_out.{h,cc}` | Jack output: shared jack ownership + sender thread writing to "MPC Private" |
+| `src/midi_out.{h,cc}` | MIDI output: one ALSA sequencer client per instance, "Glass Spheres N" (libasound via dlopen) |
+| `src/mod.{h,cc}` | Envelopes, LFOs, 8-slot matrix (from Overcast; sources include the own outputs) |
 | `src/scales.cc` | Marbles' six factory scales (copied from `settings.cc`) |
-| `params.json` | Parameter list = VST parameter order |
-| `layout.conf` | Skin layout (3 tabs), edit with the framework's SkinStudio |
-| `vst.json` | Framework build description |
-| `patches/0001-wrapper-host-transport.patch` | Adds `HAS_HOST_TRANSPORT` to the framework wrapper |
-| `patches/0002-wrapper-option-qlink-zones.patch` | Adds `OPTION_QLINK_ZONES`: a Q-Link turns toggles/options through zones |
+| `params.json` | Parameter list = VST parameter order (modulation part from `skin/gen_params.py`) |
+| `skin/gen_layout.py` | Writes `layout.conf` (don't edit that by hand) and `skin/qlink_bounds.json` |
+| `skin/post_build.py` | Run by `build.sh` on the built skin (names, sliders, focus marks, list catchers; as Overcast's) |
+| `patches/` | Framework wrapper patches: host transport, option Q-Link zones, drop-down behaviour (0003) |
 | `third_party/eurorack/` | Vendored Marbles DSP + stmlib subset (MIT; see its README for commits) |
-| `third_party/mpc-vst-plugins/` | Framework, git submodule (no license file upstream, so not vendored) |
-| `test/` | `sim_test.cc`: native run of the engine with a recording cv_out |
-| `cv/` | Protocol notes, `cvsniff.c` (in-process logger + injector), `sniff-try.sh`, capture log |
-| `build.sh`, `deploy.sh` | Build and install |
+| `third_party/mpc-vst-plugins/` | Framework, git submodule (keep at Overcast's commit) |
+| `cv/` | CV protocol notes, `cvsniff.c` (in-process logger + injector) |
+| `tools/seqdump.c` | Prints a sequencer port's events on the device (`/data/hacks/seqdump <client>:<port> [s]`) |
+| `test/` | `sim_test.cc`: native engine run from the Marbles CV days; not updated for MIDI / modulation |
 
 ## Mac prerequisites (installed 2026-09-29)
 
@@ -49,13 +45,13 @@ Homebrew: `docker colima docker-buildx bash`. Docker runs in Colima, not Docker 
 - macOS `/bin/bash` 3.2 breaks the framework scripts; `build.sh` uses `/opt/homebrew/bin/bash`.
 - **This repo is on an exFAT volume** and Docker's file sharing fails there (files written in the
   container "don't exist" a moment later). `build.sh` therefore mirrors the port to
-  `~/.cache/marbles-cv-build` and copies the results back to `build/`.
+  `~/.cache/glass-spheres-build` and copies the results back to `build/`.
 - Zig 0.16 (`/opt/homebrew/bin/zig`) cross-compiles the small device tools (cvsniff).
 
 ## Build and test
 
 ```sh
-./build.sh          # -> build/marbles_cv.so, build/skin/Padbangers - VST - Marbles CV/, build/pluginlist-entry.xml
+./build.sh          # -> build/glass_spheres.so, build/skin/Padbangers - VST - Glass Spheres/, build/pluginlist-entry.xml
 ./build.sh test     # framework host test (native clang, ASan/UBSan) — must print PASSED
 make -C test run    # engine simulation: gate rates, voltage ranges, transport stop, jack takeover
 ```
@@ -67,9 +63,9 @@ no gates while stopped; instance b takes CV 1.
 Skin preview (Pillow isn't installed on the Mac, so in a container):
 
 ```sh
-S=~/.cache/marbles-cv-build/port
+S=~/.cache/glass-spheres-build/port
 docker run --rm -u "$(id -u):$(id -g)" -e HOME=/tmp -v "$S":/w -w /w python:3.11-slim sh -c \
-  'pip install -q --target /tmp/p pillow >/dev/null 2>&1; PYTHONPATH=/tmp/p python3 third_party/mpc-vst-plugins/tools/studio.py preview "build/skin/Padbangers - VST - Marbles CV/Plugin Skins" -o /w/build/preview_%d.png'
+  'pip install -q --target /tmp/p pillow >/dev/null 2>&1; PYTHONPATH=/tmp/p python3 third_party/mpc-vst-plugins/tools/studio.py preview "build/skin/Padbangers - VST - Glass Spheres/Plugin Skins" -o /w/build/preview_%d.png'
 ```
 
 ## Deploy
@@ -78,11 +74,11 @@ The MPC is `ssh mpcx` (root, `~/.ssh/config`). **Always ask the user before anyt
 app** — it kills unsaved projects.
 
 ```sh
-./deploy.sh          # copies skin + .so to /sdcard/Synths/Padbangers - VST - Marbles CV/ (staged, md5-checked)
+./deploy.sh          # copies skin + .so to /sdcard/Synths/Padbangers - VST - Glass Spheres/ (staged, md5-checked)
 ./deploy.sh --yes    # also registers in MPC.settings if missing (stops/starts the app, backs up settings)
 ```
 
-Registration is already done. For a new build: `./deploy.sh`, then the user removes Marbles CV from
+Registration is already done. For a new build: `./deploy.sh`, then the user removes Glass Spheres from
 its track and inserts it again. **That often isn't enough:** MPC keeps the `.so` loaded while any instance exists
 (undo history included). `deploy.sh` compares the inode MPC has mapped with the new file and says when the app has
 to be restarted instead (ask the user to save first).
@@ -90,8 +86,8 @@ to be restarted instead (ask the user to save first).
 ## Device facts that matter here
 
 - The button-remap shim loads via `/etc/ld.so.preload` (not the launcher's `LD_PRELOAD`). Never add
-  `shim_remap6.so` to an `LD_PRELOAD` as well: loaded twice, the app crashed. Check it is loaded:
-  `grep -c shim_remap6 /proc/$(pidof MPC)/maps` (≈7).
+  `shim_remap9.so` to an `LD_PRELOAD` as well: loaded twice, the app crashed. Check it is loaded:
+  `grep -c shim_remap9 /proc/$(pidof MPC)/maps` (≈7).
 - `systemctl start acvs` uses the stock launcher `/usr/bin/az01-launch-MPC` (read-only rootfs).
 - App log: `journalctl -u acvs`. Crashes show as `code=dumped, status=11/SEGV`; the minidumps go
   to Akai's Sentry reporter and aren't useful.
@@ -128,21 +124,26 @@ to be restarted instead (ask the user to save first).
 - **Q-Links:** `OPTION_QLINK_ZONES` (patch 0002) — the user wanted toggles like "0-64 off, above on" instead of
   the framework's step-per-nudge, which made toggles flicker on a turning knob.
 - **Skin:** `"art": "html"` (browser renderer, real Titillium Web): the default bitmap font was tiny and spaced
-  out. Still the auto-layout look; Clouds has the custom panel look (`../clouds/skin/`).
+  out. The panel look comes from `skin/gen_layout.py` (as Overcast).
+
+## MIDI output
+
+- MPC lists the instance's port as a MIDI input ("Glass Spheres 1"); in MPC's MIDI settings the user set it to
+  control + track. The receiving track needs that input (or All), the voice's channel and monitoring on. Without
+  monitoring the MPC shows activity but plays nothing (seen 2026-10-04).
+- Events go out with `snd_seq_event_output_direct` from the audio thread (non-blocking client).
+- Voices: gate edge per block (2.9 ms); pitch sampled at the gate's rising edge from the block's last voltages.
+
+## Releasing
+
+As Overcast's runbook (bench, `release.py`, `catalog_check.py`, device test with the zip's `install.sh -y` after the
+user saved, `tested.json`, push, `gh release create glass-spheres-vX.Y.Z`; `--prerelease` for betas = catalog
+channel beta). Catalog entry `catalog/plugins/glass-spheres.json` in sd88me/mpc-vst-plugins.
 
 ## Next steps
 
-1. With a real VCO on CV1: run the plugin, check smooth X glides (X Steps < 0.5), 1 V/oct accuracy
-   per jack (add a per-jack calibration offset/scale if needed), and find the controller's update-rate
-   ceiling (lower `kMinWriteIntervalNs` until glitches appear; the cvsniff injector helps).
-2. Device checklist with the user: plugin in the browser, skin renders, Q-Links, Clock = MPC sync,
-   save/reload project, two instances on different jacks, remove instance → jacks go to 0 V.
-3. CPU check: `third_party/mpc-vst-plugins/tools/bench.sh build/marbles_cv.so <ip>` (see its docs/BENCH.md).
-4. Skin design (currently the auto-layout with the html renderer): the user may want the Clouds-style panel look
-   (`../clouds/skin/gen_layout.py` as the pattern).
-5. Later: register mode / external input via MIDI notes, per-jack calibration, offset for ±5 V.
-6. Before sharing publicly: the name "Marbles" is Mutable Instruments'; the framework has no license
-   file; the `HAS_HOST_TRANSPORT` patch could go upstream as a PR.
+- Beta feedback; the CV path with a real VCO (1 V/oct accuracy, update-rate ceiling, see `cv/README.md`).
+- Update `test/sim_test.cc` for MIDI and modulation, or drop it.
 
 ## Reverse-engineering tools
 
