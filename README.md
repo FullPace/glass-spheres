@@ -10,7 +10,7 @@ makes no sound itself: it plays other tracks over **MIDI**, or analog gear over 
 - **CV output** (MPC X): the seven outputs on any of the eight jacks, 1 V/octave.
 - **Modulation:** two envelopes, two LFOs and an 8-slot matrix onto Marbles' CV inputs, with its own outputs as
   sources (patched back, as on the module).
-- A built-in manual on its own tab. **Beta:** the first release; please report what you find.
+- A built-in manual on its own tab.
 
 ![Glass Spheres main page](docs/glass-spheres-main.png)
 ![Glass Spheres Y and clock page](docs/glass-spheres-y-clock.png)
